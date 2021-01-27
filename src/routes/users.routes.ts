@@ -1,6 +1,7 @@
 import { Router } from 'express';
 
 import UsersRepository from '../repositories/UsersRepository';
+import CreateUserService from '../services/CreateUserService';
 
 const usersRouter = Router();
 const usersRepository = new UsersRepository();
@@ -12,23 +13,17 @@ usersRouter.get('/', (request, response) => {
 });
 
 usersRouter.post('/', (request, response) => {
-  const { name, email, password } = request.body;
+  try {
+    const { name, email, password } = request.body;
 
-  const findUserWithSameEmail = usersRepository.findByEmail(email);
+    const createUser = new CreateUserService(usersRepository);
 
-  if (findUserWithSameEmail) {
-    return response
-      .status(400)
-      .json({ message: 'This e-mail is already being used' });
+    const user = createUser.execute({ name, email, password });
+
+    return response.json(user);
+  } catch (err) {
+    return response.status(400).json({ error: err.message });
   }
-
-  const user = usersRepository.create({
-    name,
-    email,
-    password,
-  });
-
-  return response.json(user);
 });
 
 export default usersRouter;
