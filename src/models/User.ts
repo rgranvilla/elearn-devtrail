@@ -9,7 +9,7 @@ class User {
 
   password: string;
 
-  constructor(name: string, email: string, password: string) {
+  constructor({ name, email, password }: Omit<User, 'userId'>) {
     this.userId = uuidv4();
     this.name = name;
     this.email = email;
