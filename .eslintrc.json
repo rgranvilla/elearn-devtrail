@@ -19,11 +19,7 @@
         "@typescript-eslint"
     ],
     "rules": {
-      "prettier/prettier": ["error", {
-        "singleQuote": true,
-        "parser": "flow"
-      }
-    ],
+      "prettier/prettier": "error",
       "import/extensions": [
         "error",
         "ignorePackages",

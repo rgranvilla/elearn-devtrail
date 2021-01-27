@@ -1,21 +1,14 @@
 import { Router } from 'express';
-import { v4 as uuidv4 } from 'uuid';
 
-interface User {
-  userId: string;
-  name: string;
-  email: string;
-  password: string;
-}
+import UsersRepository from '../repositories/UsersRepository';
 
 const usersRouter = Router();
-
-const users: User[] = [];
+const usersRepository = new UsersRepository();
 
 usersRouter.post('/', (request, response) => {
   const { name, email, password } = request.body;
 
-  const findUserWithSameEmail = users.find(user => email === user.email);
+  const findUserWithSameEmail = usersRepository.findByEmail(email);
 
   if (findUserWithSameEmail) {
     return response
@@ -23,14 +16,7 @@ usersRouter.post('/', (request, response) => {
       .json({ message: 'This e-mail is already being used' });
   }
 
-  const user = {
-    userId: uuidv4(),
-    name,
-    email,
-    password,
-  };
-
-  users.push(user);
+  const user = usersRepository.create(name, email, password);
 
   return response.json(user);
 });
