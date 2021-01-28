@@ -3,6 +3,7 @@ import { getCustomRepository } from 'typeorm';
 
 import UsersRepository from '../repositories/UsersRepository';
 import CreateUserService from '../services/CreateUserService';
+import userViews from '../views/userViews';
 
 const usersRouter = Router();
 
@@ -21,7 +22,7 @@ usersRouter.post('/', async (request, response) => {
 
     const user = await createUser.execute({ name, email, password });
 
-    return response.json(user);
+    return response.json({ user: userViews.render(user) });
   } catch (err) {
     return response.status(400).json({ error: err.message });
   }
