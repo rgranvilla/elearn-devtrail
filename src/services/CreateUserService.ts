@@ -1,3 +1,5 @@
+import { getCustomRepository } from 'typeorm';
+
 import User from '../models/User';
 import UsersRepository from '../repositories/UsersRepository';
 
@@ -8,24 +10,22 @@ interface RequestDTO {
 }
 
 class CreateUserService {
-  private usersRepository: UsersRepository;
+  public async execute({ name, email, password }: RequestDTO): Promise<User> {
+    const usersRepository = getCustomRepository(UsersRepository);
 
-  constructor(usersRepository: UsersRepository) {
-    this.usersRepository = usersRepository;
-  }
-
-  public execute({ name, email, password }: RequestDTO): User {
-    const findUserWithSameEmail = this.usersRepository.findByEmail(email);
+    const findUserWithSameEmail = await usersRepository.findByEmail(email);
 
     if (findUserWithSameEmail) {
       throw Error('This e-mail is already being used');
     }
 
-    const user = this.usersRepository.create({
+    const user = usersRepository.create({
       name,
       email,
       password,
     });
+
+    await usersRepository.save(user);
 
     return user;
   }
